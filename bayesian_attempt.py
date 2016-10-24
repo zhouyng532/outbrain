@@ -46,17 +46,18 @@ ad_avt = ad_avt.to_dict()['advertiser_id']
 
 
 # ---------------------------------------------------------------------------------------------------------------------
+# choose ad_id
 a = 11
 # bayesian model
 model = None
 with pm.Model()as model:
-    mu = pm.Normal('mean', mu=advertiser_prior_mean[ad_avt[a]], sd=advertiser_prior_mean.std()*2)
-    sigma = pm.Gamma('std', mu=advertiser_prior_std[ad_avt[a]], sd=advertiser_prior_std.std())
-    likelihood = pm.Gamma('click_prob', mu=mu, sd=sigma,
-                           observed=np.array(ad_data.ix[a,'clicked']))
-    trace = pm.sample(5000, step=pm.Metropolis(), progressbar=False, random_seed=16357)
+    mu = pm.Normal('mean', mu=advertiser_prior_mean[ad_avt[a]], sd=advertiser_prior_mean.std()*2) # prior for mu
+    sigma = pm.Gamma('std', mu=advertiser_prior_std[ad_avt[a]], sd=advertiser_prior_std.std()) # prior for sigma
+    likelihood = pm.Gamma('click_prob', mu=mu, sd=sigma, # include the priors
+                           observed=np.array(ad_data.ix[a,'clicked'])) # include the data
+    trace = pm.sample(5000, step=pm.Metropolis(), progressbar=False, random_seed=16357) # sampling from posterior
 
-trace.get_values('mean').mean()
+trace.get_values('mean').mean() # check the mean value of sampling
 
 
 
