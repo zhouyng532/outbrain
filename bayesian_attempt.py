@@ -60,4 +60,3 @@ with pm.Model()as model:
 trace.get_values('mean').mean() # check the mean value of sampling
 
 
-
